@@ -296,11 +296,18 @@ long, et sur un « Sie »/« Ihr… » de politesse en allemand. Le store exige 
   (niveau le plus haut, début le plus tôt, fin la plus tardive), comme le déclencheur d'alerte du
   cœur (identité = `type`). « Mise à jour » = titre ou horaires changés, pas l'heure d'envoi.
 - Zones : polygones des régions (ISO 3166-2) ou de leurs parties, côte simplifiée : point dans le
-  polygone, ou à moins de 2 km du bord (îles, rivages). Vigilances maritimes écartées sauf
-  `seaWaterHeight` (niveau de la mer → `coastal`).
+  polygone, ou à moins de 2 km du bord (îles, rivages ; aussi près d'une limite terrestre : une
+  maison à moins de 2 km d'une région voisine reçoit ses vigilances, du côté prudent). Vigilances
+  maritimes écartées sauf `seaWaterHeight` (niveau de la mer → `coastal`), **non vérifié** : aucune
+  n'était en cours le 23/10 ; si le FMI la dessine sur les zones maritimes, elle n'atteindra que les
+  maisons à moins de 2 km de leur bord.
 - Types du pivot : wind, rain, thunderstorm, cold, heat, coastal ; feux de forêt, circulation,
   piétons, UV sans `type` (le cœur l'ignorerait) mais avec leur propre filtre dans le déclencheur
   maison.
+
+- Prévision et observations partent **en parallèle** (observations : 5 s max) pour tenir dans les
+  15 s d'une requête météo du cœur ; après une panne réseau ou 5xx, une position n'est pas
+  redemandée avant 2 min (les lecteurs ne repaient pas le délai d'attente).
 
 **Choix (à revoir si besoin).** Type `weather` comme Met Éireann et MET Norway (pas d'appareil
 « Vigilances » : B.18 interdit toute surface d'appareil à ce type). Pas de réglage de zone : le

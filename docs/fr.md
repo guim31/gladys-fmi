@@ -221,7 +221,8 @@ disponibles** vaut non.
   écartées ; celle du niveau de la mer, qui inonde les rivages, est gardée.
   Les avis verts sont écartés.
 - **La zone d'une vigilance** est son polygone, tel que le publie le FMI,
-  plus 2 km pour les côtes et les îles qu'il simplifie.
+  plus 2 km pour les côtes et les îles qu'il simplifie ; près d'une limite
+  terrestre, une maison peut aussi recevoir les vigilances de la région voisine.
 - **L'heure est le pas le plus fin**, sur 9 jours environ.
 - **Aujourd'hui** ne contient que les heures encore à venir.
 - **Les jours** sont découpés dans le fuseau horaire de Gladys, pour toutes

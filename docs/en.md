@@ -212,7 +212,8 @@ Sun 25 Oct, 08:00 to Mon 26 Oct, 14:00." If FMI cannot be reached,
   icing, thunderstorms at sea) concern boats and are left out; the sea
   level warning, which floods shores, is kept. Green notices are left out.
 - **The area of a warning** is its polygon, as published by FMI, plus 2 km
-  for the coasts and islands it simplifies.
+  for the coasts and islands it simplifies; near a land border, a house may
+  also get the warnings of the neighbouring region.
 - **The hour is the finest step**, for about 9 days.
 - **Today** only holds the hours still to come.
 - **The days** are cut in the time zone of Gladys, for every house.

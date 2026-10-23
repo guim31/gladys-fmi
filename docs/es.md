@@ -216,7 +216,8 @@ Casa: Aviso amarillo por viento, del dom., 25 oct., 08:00 al lun., 26 oct.,
   descartan; el del nivel del mar, que inunda las costas, se mantiene. Los
   avisos verdes se descartan.
 - **La zona de un aviso** es su polígono, tal como lo publica el FMI, más
-  2 km para las costas y las islas que simplifica.
+  2 km para las costas y las islas que simplifica; cerca de un límite
+  terrestre, una vivienda puede recibir también los avisos de la región vecina.
 - **La hora es el paso más fino**, durante unos 9 días.
 - **Hoy** solo contiene las horas que quedan.
 - **Los días** se cortan en la zona horaria de Gladys, para todas las

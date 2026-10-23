@@ -13,8 +13,8 @@
  * @returns {object} `{ fail, recover, failing }`.
  * @example
  * const failures = createFailureLog(logger);
- * failures.fail('met', 'FMI unreachable');
- * failures.recover('met', 'FMI answers again');
+ * failures.fail('fmi', 'FMI unreachable');
+ * failures.recover('fmi', 'FMI answers again');
  */
 function createFailureLog(logger) {
   // key -> kind of the failure under way
@@ -57,7 +57,7 @@ function createFailureLog(logger) {
    * @param {string} key - The key.
    * @returns {boolean} True while failing.
    * @example
-   * failures.failing('met');
+   * failures.failing('fmi');
    */
   function failing(key) {
     return active.has(key);

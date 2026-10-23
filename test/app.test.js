@@ -247,3 +247,21 @@ test('the test action reports the station, the warnings, in four languages', asy
   );
   assert.deepEqual(Object.keys(message).sort(), ['de', 'en', 'es', 'fr']);
 });
+
+test('after a network failure, readers do not pay the timeout again at once', async () => {
+  let down = true;
+  const base = fmiRoute();
+  const { gladys, fetchImpl } = await start({
+    route: (url) => (down && url.includes('forecast') ? { status: 503, body: '' } : base(url)),
+  });
+  const before = forecastCalls(fetchImpl).length;
+  down = false;
+  const ack = await gladys.fake.weatherGet({
+    latitude: HOUSES.helsinki.latitude,
+    longitude: HOUSES.helsinki.longitude,
+    language: 'en',
+    units: 'metric',
+  });
+  assert.equal(ack.success, false, 'within 2 minutes: the failure is served');
+  assert.equal(forecastCalls(fetchImpl).length, before);
+});

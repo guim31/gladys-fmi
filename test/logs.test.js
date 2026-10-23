@@ -92,8 +92,8 @@ test('a failure that repeats is one warning, then one line when FMI answers agai
   });
   await fireTimer();
   await fireTimer();
-  // No observation call without a forecast.
-  assert.equal(fetchImpl.calls.length, 6, 'three failed cycles');
+  // The forecast and the observations go out together, then the warnings.
+  assert.equal(fetchImpl.calls.length, 9, 'three failed cycles');
   // One for the forecast, one for the warnings, never repeated.
   assert.equal(logger.at('warn').length, 2, logger.at('warn').join('\n'));
   assert.match(logger.at('warn')[0], /HTTP 503/);

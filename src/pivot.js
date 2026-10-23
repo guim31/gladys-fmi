@@ -17,9 +17,9 @@
 //             (warnings.js): the core draws them on its weather widget and
 //             runs its own weather-alert scene trigger on them.
 //
-// No apparent temperature, UV index nor visibility: the open forecast has
-// none. Day and night come from the computed sun: the legacy symbols have no
-// night variant.
+// No visibility. The feels-like temperature and the UV index come from the
+// forecast. Day and night come from the computed sun: FMI's WeatherSymbol3
+// has no night variant.
 // -----------------------------------------------------------------------------
 
 import { buildDays } from './daily.js';
@@ -116,7 +116,7 @@ function isDay(symbol, ms, latitude, longitude) {
  * @param {Array<object>} [options.alerts] - The pivot alerts (warnings.js).
  * @returns {object} The pivot weather payload.
  * @example
- * buildWeather(forecast, { latitude, longitude, units: 'us', timeZone: 'Europe/Dublin' });
+ * buildWeather(forecast, { latitude, longitude, units: 'us', timeZone: 'Europe/Helsinki' });
  */
 function buildWeather(
   forecast,

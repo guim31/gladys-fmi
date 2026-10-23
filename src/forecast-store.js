@@ -41,6 +41,12 @@ const FORBIDDEN_BLOCK_MS = 6 * 60 * 60 * 1000;
 // A location without forecast (outside the domain of the models) is not
 // asked again for this long.
 const NO_FORECAST_MS = DEFAULT_EXPIRY_MS;
+// After a network or server failure, the same location is not asked again
+// for this long (the scheduler's first retry comes after 5 minutes).
+const RETRY_AFTER_FAILURE_MS = 2 * 60 * 1000;
+// The observations are a bonus: they must leave room for the forecast in
+// the 15 s of a weather request.
+const OBSERVATION_TIMEOUT_MS = 5000;
 
 /**
  * @description The cache key of a location: the coordinates as sent (4
@@ -49,7 +55,7 @@ const NO_FORECAST_MS = DEFAULT_EXPIRY_MS;
  * @param {number} longitude - The longitude.
  * @returns {string} The key.
  * @example
- * locationKey(53.349812, -6.2603); // -> '53.3498,-6.2603'
+ * locationKey(60.169856, 24.9384); // -> '60.1699,24.9384'
  */
 function locationKey(latitude, longitude) {
   return `${latitude.toFixed(4)},${longitude.toFixed(4)}`;
@@ -102,7 +108,7 @@ function createForecastStore({
   }
 
   /**
-   * @description Remember a failure, and pause the calls when MET asks.
+   * @description Remember a failure, and pause the calls when FMI asks.
    * @param {FmiError} err - The error.
    * @example
    * recordFailure(err);
@@ -116,14 +122,14 @@ function createForecastStore({
       blockedKind = kind;
       throttleMs = Math.min(throttleMs * 2, THROTTLE_MAX_MS);
       failures.fail(
-        'met',
+        'fmi',
         `FMI throttles the requests (429): pausing ${Math.round(delay / 60000)} min`,
         { kind },
       );
     } else if (kind === ERROR_KINDS.FORBIDDEN) {
       blockedUntil = now() + FORBIDDEN_BLOCK_MS;
       blockedKind = kind;
-      failures.fail('met', 'FMI refused the requests (403): pausing 6 hours', {
+      failures.fail('fmi', 'FMI refused the requests (403): pausing 6 hours', {
         kind,
         level: 'error',
       });
@@ -131,38 +137,72 @@ function createForecastStore({
       // Usually a house outside the domain of the models: not an outage, and
       // not asked again before 30 minutes.
       missing.set(key, { until: now() + NO_FORECAST_MS, error: err });
-      failures.fail(`met:${key}`, `No usable FMI forecast for a house: ${err.message}`, {
+      failures.fail(`fmi:${key}`, `No usable FMI forecast for a house: ${err.message}`, {
         kind,
         level: 'info',
       });
     } else {
+      // Readers (the dashboard, the chat) do not pay the timeout again for
+      // a while; the scheduler retries later anyway.
+      missing.set(key, { until: now() + RETRY_AFTER_FAILURE_MS, error: err });
       // One key per location: a house that fails must not hide, or be hidden
       // by, one that works.
-      failures.fail(`met:${key}`, `FMI request failed: ${err.message}`, { kind });
+      failures.fail(`fmi:${key}`, `FMI request failed: ${err.message}`, { kind });
     }
   }
 
   /**
+   * @description Read the observations of a location, never throwing: the
+   * outcome is judged once the forecast answered (observe()).
+   * @param {number} latitude - The latitude.
+   * @param {number} longitude - The longitude.
+   * @returns {Promise<{xml?: string, error?: Error}>} The answer or the error.
+   * @example
+   * await readObservations(60.1699, 24.9384);
+   */
+  function readObservations(latitude, longitude) {
+    return fetchObservations({
+      latitude,
+      longitude,
+      fetchImpl,
+      now,
+      timeoutMs: OBSERVATION_TIMEOUT_MS,
+    }).then(
+      (xml) => ({ xml }),
+      (error) => ({ error }),
+    );
+  }
+
+  /**
    * @description The latest observation of the nearest station, null when
-   * unavailable (logged once, not an outage of the integration).
+   * unavailable (logged once, not an outage of the integration — but a 429
+   * or a 403 pauses every call, as for the forecast).
+   * @param {Promise<object>} pending - The result of readObservations().
    * @param {number} latitude - The latitude.
    * @param {number} longitude - The longitude.
    * @param {string} key - The location key.
    * @returns {Promise<object|null>} The observation.
    * @example
-   * await observe(60.1699, 24.9384, '60.1699,24.9384');
+   * await observe(readObservations(60.1699, 24.9384), 60.1699, 24.9384, key);
    */
-  async function observe(latitude, longitude, key) {
+  async function observe(pending, latitude, longitude, key) {
+    const { xml, error } = await pending;
     try {
-      const xml = await fetchObservations({ latitude, longitude, fetchImpl, now });
+      if (error !== undefined) {
+        throw error;
+      }
       const observation = readObservation(xml, { latitude, longitude, now: now() });
       failures.recover(`obs:${key}`, 'FMI observations are readable again for a house');
       return observation;
     } catch (err) {
-      failures.fail(`obs:${key}`, `FMI observations unavailable for a house: ${err.message}`, {
-        kind: err.kind,
-        level: 'info',
-      });
+      if (err.kind === ERROR_KINDS.THROTTLED || err.kind === ERROR_KINDS.FORBIDDEN) {
+        recordFailure(err, key);
+      } else {
+        failures.fail(`obs:${key}`, `FMI observations unavailable for a house: ${err.message}`, {
+          kind: err.kind,
+          level: 'info',
+        });
+      }
       return null;
     }
   }
@@ -176,7 +216,7 @@ function createForecastStore({
    * expiresAt }`.
    * @throws {FmiError} When the call fails or is paused.
    * @example
-   * await store.refresh(53.3498, -6.2603);
+   * await store.refresh(60.1699, 24.9384);
    */
   function refresh(latitude, longitude) {
     const key = locationKey(latitude, longitude);
@@ -199,6 +239,8 @@ function createForecastStore({
     const call = (async () => {
       calls += 1;
       try {
+        // Both at once: a weather request of the core waits 15 s at most.
+        const observations = readObservations(latitude, longitude);
         const xml = await fetchForecast({ latitude, longitude, fetchImpl, now });
         let forecast;
         try {
@@ -208,15 +250,15 @@ function createForecastStore({
         }
         // The current conditions are a bonus: without them, the forecast
         // describes the weather now.
-        forecast.observation = await observe(latitude, longitude, key);
+        forecast.observation = await observe(observations, latitude, longitude, key);
         const at = now();
         const entry = { forecast, fetchedAt: at, checkedAt: at, expiresAt: at + DEFAULT_EXPIRY_MS };
         entries.set(key, entry);
         missing.delete(key);
         lastError = null;
         throttleMs = THROTTLE_FIRST_MS;
-        failures.recover('met', 'FMI answers again');
-        failures.recover(`met:${key}`, 'FMI answers again');
+        failures.recover('fmi', 'FMI answers again');
+        failures.recover(`fmi:${key}`, 'FMI answers again');
         return entry;
       } catch (err) {
         recordFailure(err, key);
@@ -235,7 +277,7 @@ function createForecastStore({
    * @param {number} longitude - The longitude.
    * @returns {object|null} The entry, or null.
    * @example
-   * store.peek(53.3498, -6.2603);
+   * store.peek(60.1699, 24.9384);
    */
   function peek(latitude, longitude) {
     return entries.get(locationKey(latitude, longitude)) ?? null;
@@ -253,7 +295,7 @@ function createForecastStore({
    * @returns {Promise<object>} The entry, with `stale`.
    * @throws {FmiError} When there is nothing to serve.
    * @example
-   * const { forecast } = await store.load(53.3498, -6.2603, { maxAgeMs: 35 * 60000 });
+   * const { forecast } = await store.load(60.1699, 24.9384, { maxAgeMs: 35 * 60000 });
    */
   async function load(latitude, longitude, { maxAgeMs }) {
     const cached = peek(latitude, longitude);
@@ -278,7 +320,7 @@ function createForecastStore({
    * @param {Set<string>} keys - The keys of the locations to consider.
    * @returns {number|null} The latest expiry among them, in ms, or null.
    * @example
-   * store.latestExpiry(new Set(['53.3498,-6.2603']));
+   * store.latestExpiry(new Set(['60.1699,24.9384']));
    */
   function latestExpiry(keys) {
     let latest = null;
@@ -296,7 +338,7 @@ function createForecastStore({
    * are too old to be served: memory stays bounded by the houses.
    * @param {Set<string>} keep - The keys of the refreshed locations.
    * @example
-   * store.prune(new Set(['53.3498,-6.2603']));
+   * store.prune(new Set(['60.1699,24.9384']));
    */
   function prune(keep) {
     for (const [key, entry] of entries) {
@@ -336,6 +378,8 @@ function createForecastStore({
 
 export {
   DEFAULT_EXPIRY_MS,
+  OBSERVATION_TIMEOUT_MS,
+  RETRY_AFTER_FAILURE_MS,
   FORBIDDEN_BLOCK_MS,
   STALE_MAX_MS,
   THROTTLE_FIRST_MS,

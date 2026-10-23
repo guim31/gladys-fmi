@@ -221,7 +221,8 @@ FMI nicht erreichbar ist, ist **Warnungen verfügbar** nein.
   Warnung zum Meeresspiegel, der Ufer überflutet, bleibt. Grüne Hinweise
   werden ausgelassen.
 - **Das Gebiet einer Warnung** ist ihr Polygon, wie vom FMI veröffentlicht,
-  plus 2 km für die Küsten und Inseln, die es vereinfacht.
+  plus 2 km für die Küsten und Inseln, die es vereinfacht; nahe einer
+  Landgrenze kann ein Zuhause auch die Warnungen der Nachbarregion erhalten.
 - **Die Stunde ist der feinste Schritt**, für etwa 9 Tage.
 - **Heute** enthält nur die noch kommenden Stunden.
 - **Die Tage** werden in der Zeitzone von Gladys geschnitten, für alle

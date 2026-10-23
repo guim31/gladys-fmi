@@ -273,3 +273,30 @@ test('after a failure, readers do not call again for 5 minutes', async () => {
   await store.load();
   assert.equal(fetchImpl.calls.length, 2);
 });
+
+test('two warnings of one phenomenon at one level: the order of the feed changes nothing', () => {
+  const sunday = entry({
+    id: 'a',
+    headline: 'Yellow wind warning for land areas: Uusimaa, Sun 8.00 - 14.00',
+    onset: '2026-10-25T08:00:00+02:00',
+    expires: '2026-10-25T14:00:00+02:00',
+  });
+  const tuesday = entry({
+    id: 'b',
+    headline: 'Yellow wind warning for land areas: Uusimaa, Tue 8.00 - 14.00',
+    onset: '2026-10-27T08:00:00+02:00',
+    expires: '2026-10-27T14:00:00+02:00',
+  });
+  const one = warningsOf(parseWarnings(feed(sunday, tuesday)), HOME);
+  const other = warningsOf(parseWarnings(feed(tuesday, sunday)), HOME);
+  assert.deepEqual(diffWarnings(one, other), []);
+  assert.match(one[0].headline, /Sun 8\.00/);
+  assert.equal(Object.hasOwn(one[0], 'headlineOnset'), false);
+});
+
+test('an alert without English text is still read, from another language', () => {
+  const finnish = entry({ id: 'fi' }).replace(/<info><language>en-GB[\s\S]*?<\/info>/, '');
+  const [warning] = parseWarnings(feed(finnish));
+  assert.equal(warning.type, 'wind');
+  assert.equal(warning.headline, 'Muu');
+});

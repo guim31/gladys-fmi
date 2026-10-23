@@ -475,7 +475,7 @@ function daySentence({ day, condition, min, max, precipitation, probability, lab
  * @param {string} timeZone - An IANA time zone name.
  * @returns {string} E.g. 'Sat 24 Oct, 14:00'.
  * @example
- * formatWhen(Date.UTC(2026, 9, 24, 13), 'en', 'Europe/Dublin');
+ * formatWhen(Date.UTC(2026, 9, 24, 13), 'en', 'Europe/Helsinki');
  */
 function formatWhen(ms, language, timeZone) {
   return new Intl.DateTimeFormat(LOCALES[language] ?? LOCALES.en, {
@@ -515,7 +515,7 @@ function warningName(warning, language) {
  * start.
  * @returns {string} The period, empty without an expiry.
  * @example
- * warningPeriod(warning, 'en', 'Europe/Dublin', Date.now());
+ * warningPeriod(warning, 'en', 'Europe/Helsinki', Date.now());
  */
 function warningPeriod(warning, language, timeZone, now) {
   if (warning.expiry === null) {
@@ -530,7 +530,7 @@ function warningPeriod(warning, language, timeZone, now) {
 
 /**
  * @description The sentence of a warning change, ready to put in a message:
- * "Orange wind warning issued for Kerry, from Sat 24 Oct, 14:00 to Sun 25
+ * "Orange wind warning issued for Uusimaa, from Sat 24 Oct, 14:00 to Sun 25
  * Oct, 09:00."
  * @param {object} values - Values.
  * @param {string} values.change - One of warnings.js CHANGES.
@@ -555,7 +555,7 @@ function warningChangeSentence({ change, warning, area, timeZone, now }, languag
 
 /**
  * @description The sentence of the warnings of a place: "2 FMI
- * warnings for Kerry: Orange rain warning, until Sat 24 Oct, 14:00; …".
+ * warnings for Home: Orange rain warning, until Sat 24 Oct, 14:00; …".
  * @param {Array<object>} warnings - The warnings of the place.
  * @param {object} options - Options.
  * @param {string} options.place - The house name.

@@ -16,7 +16,9 @@
 //   - every `<area>` has a name (`Uusimaa`, an ISO 3166-2 region, or a sea
 //     area) and one or more `<polygon>` of "lat,lon" pairs: the warning of a
 //     house is the one whose polygon holds it. The polygons follow a simplified
-//     coastline: a house up to 2 km outside still counts (islands, shores);
+//     coastline: a house up to 2 km outside still counts (islands, shores;
+//     near a land border too, so a house within 2 km of a neighbouring
+//     region also gets its warnings — the safe side);
 //   - FMI reissues its warnings as `Update`s carrying new identifiers, each
 //     `<references>` listing every earlier alert it supersedes, and a
 //     `Cancel` ends one. Identifiers are therefore no identity. Like the
@@ -165,9 +167,13 @@ function parseWarnings(feed) {
     if (textOf(entry, 'status') !== 'Actual' || textOf(entry, 'msgType') === 'Cancel') {
       continue;
     }
-    const info = [...entry.matchAll(/<info>([\s\S]*?)<\/info>/g)]
-      .map((match) => match[1])
-      .find((body) => textOf(body, 'language') === 'en-GB');
+    // English first; FMI's profile promises no language, so another one
+    // still gives the phenomenon, the level, the times and the areas.
+    const infos = [...entry.matchAll(/<info>([\s\S]*?)<\/info>/g)].map((match) => match[1]);
+    const info =
+      infos.find((body) => textOf(body, 'language') === 'en-GB') ??
+      infos.find((body) => textOf(body, 'language') === 'fi-FI') ??
+      infos[0];
     if (info === undefined || id === null) {
       continue;
     }
@@ -323,16 +329,26 @@ function warningsOf(warnings, location) {
         onset: warning.onset,
         expiry: warning.expiry,
         area: area.name,
+        headlineOnset: warning.onset,
       });
       continue;
     }
-    if (warning.rank > merged.rank) {
+    // The highest level wins; at the same level, the soonest alert, so that
+    // the text does not depend on the order of the feed.
+    if (
+      warning.rank > merged.rank ||
+      (warning.rank === merged.rank &&
+        ((warning.onset ?? 0) < (merged.headlineOnset ?? 0) ||
+          ((warning.onset ?? 0) === (merged.headlineOnset ?? 0) &&
+            warning.headline < merged.headline)))
+    ) {
       Object.assign(merged, {
         level: warning.level,
         rank: warning.rank,
         headline: warning.headline,
         description: warning.description,
         area: area.name,
+        headlineOnset: warning.onset,
       });
     }
     merged.onset =
@@ -344,9 +360,9 @@ function warningsOf(warnings, location) {
         ? null
         : Math.max(merged.expiry, warning.expiry);
   }
-  return [...byType.values()].sort(
-    (a, b) => b.rank - a.rank || (a.onset ?? 0) - (b.onset ?? 0) || a.id.localeCompare(b.id),
-  );
+  return [...byType.values()]
+    .map(({ headlineOnset: _headlineOnset, ...warning }) => warning)
+    .sort((a, b) => b.rank - a.rank || (a.onset ?? 0) - (b.onset ?? 0) || a.id.localeCompare(b.id));
 }
 
 /**
