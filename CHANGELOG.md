@@ -10,6 +10,8 @@ the notes of the version's GitHub Release.
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-10-23
+
 ### Added
 
 - FMI weather for Gladys (Gladys 5.2.0 or later): the current weather measured
@@ -33,4 +35,5 @@ the notes of the version's GitHub Release.
 - Settings: units and language of the scene texts. A "Test FMI" button that
   names the station used.
 
-[Unreleased]: https://github.com/guim31/gladys-fmi/commits/main
+[Unreleased]: https://github.com/guim31/gladys-fmi/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/guim31/gladys-fmi/releases/tag/v1.0.0
