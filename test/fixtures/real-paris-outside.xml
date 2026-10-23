@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ExceptionReport xmlns="http://www.opengis.net/ows/1.1"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.opengis.net/ows/1.1 http://schemas.opengis.net/ows/1.1.0/owsExceptionReport.xsd"
+  version="2.0.0" xml:lang="eng">
+
+
+  <Exception exceptionCode="OperationParsingFailed">
+    <ExceptionText>No data available for &apos;Saint-Merri&apos;!</ExceptionText>
+    <ExceptionText>URI: /wfs?endtime=2026-11-02T23%3A00%3A00Z&amp;latlon=48.8566%2C2.3522&amp;parameters=Temperature%2CFeelsLike%2CHumidity%2CDewPoint%2CPressure%2CWindSpeedMS%2CWindDirection%2CHourlyMaximumGust%2CTotalCloudCover%2CPrecipitation1h%2CPoP%2CProbabilityThunderstorm%2CWeatherSymbol3%2CUVIndex&amp;request=getFeature&amp;service=WFS&amp;storedquery_id=fmi%3A%3Aforecast%3A%3Aedited%3A%3Aweather%3A%3Ascandinavia%3A%3Apoint%3A%3Amultipointcoverage&amp;timestep=60&amp;version=2.0.0</ExceptionText>
+    
+  </Exception>
+
+</ExceptionReport>

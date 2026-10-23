@@ -1,67 +1,272 @@
-# Template de démonstration
+# FMI
 
-Ceci est la documentation utilisateur de l'intégration. Gladys ré-héberge ce
-fichier et affiche un lien **Documentation** permanent vers lui dans l'écran
-de configuration (dans la langue de l'utilisateur, avec l'anglais en repli) —
-c'est au moment de configurer que l'utilisateur en a le plus besoin. Gardez
-les courtes indications d'accueil dans les blocs `section` du `config_schema`
-du manifest ; mettez ici le pas-à-pas détaillé (captures d'écran, dépannage…).
+La météo de la Finlande dans Gladys, par
+l'[Institut météorologique finlandais](https://en.ilmatieteenlaitos.fi/)
+(FMI, Ilmatieteen laitos) : les **mesures de la station météo la plus
+proche**, la prévision établie par ses prévisionnistes (heure par heure sur
+9 jours environ) et ses **vigilances météo officielles**. Données ouvertes :
+**ni compte, ni clé d'API**.
+
+Source : Finnish Meteorological Institute, données sous licence
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.fr). Cette
+intégration est un projet communautaire, sans lien avec le FMI.
 
 ## Ce que vous obtenez
 
-Six appareils de démonstration apparaissent après l'installation : une
-station météo (vraies données Open-Meteo), un interrupteur, une lampe
-variable, une prise connectée avec mesure de puissance, un détecteur de
-mouvement et une caméra.
+- **Le widget météo de Gladys et l'assistant de discussion** utilisent le
+  FMI : la météo actuelle mesurée par la station du FMI la plus proche
+  (température, humidité, pression, point de rosée, vent et rafales,
+  couverture nuageuse), complétée par la prévision pour ce que la station ne
+  mesure pas, le lever et le coucher du soleil, les 24 prochaines heures avec
+  les précipitations de chaque heure et leur probabilité, et les 8 prochains
+  jours. Le jour et la nuit ont leurs propres icônes. Tout s'affiche en
+  **°C, m/s et mm** ou en **°F, mph et pouces**, selon le système d'unités de
+  chaque utilisateur de Gladys.
+- **Les vigilances du FMI pour votre zone** (jaune, orange, rouge : vent,
+  pluie, orages, grand froid ou fortes chaleurs, feux de forêt, conditions de
+  circulation, sécurité des piétons, UV, niveau de la mer), affichées comme
+  alertes sur le widget météo, en cours ou annoncées. Le déclencheur de
+  scène **alerte météo** intégré à Gladys fonctionne avec elles, et se
+  déclenche dans la minute qui suit un changement.
+- **Déclencheur de scène « Vigilance FMI modifiée »** : une vigilance
+  émise, relevée, abaissée, mise à jour ou levée, avec sa couleur et une
+  phrase dans votre langue.
+- **Déclencheur de scène « Pluie ou neige attendue dans l'heure »**.
+- **Action de scène « Obtenir les précipitations de l'heure à venir »**.
+- **Action de scène « Obtenir la prévision du jour »** (aujourd'hui ou
+  demain).
+- **Action de scène « Obtenir les vigilances FMI »** : le niveau le plus haut
+  pour votre maison, pour conditionner une scène.
+
+Pas de widget en plus : le widget météo de Gladys affiche déjà la météo
+actuelle, la prévision et les vigilances.
+
+**Seulement pour la Finlande.** La prévision du FMI couvre la Finlande et les
+pays nordiques voisins, ses stations et ses vigilances la Finlande ; ailleurs,
+il n'y a pas de prévision et Gladys utilise un autre fournisseur météo. Pour
+une prévision mondiale, installez plutôt **MET Norway** : il couvre aussi la
+Finlande, mais sans les stations ni les vigilances finlandaises.
+
+## Installation
+
+1. Vérifiez que votre maison a une position dans Gladys : **Paramètres →
+   Maisons**, puis l'adresse ou la position sur la carte. L'intégration met à
+   jour la météo de chaque maison qui en a une.
+2. Installez **FMI** depuis le store des intégrations (ou **Intégrations →
+   Installer depuis GitHub** avec l'adresse
+   `https://github.com/guim31/gladys-fmi`). Gladys vous demande d'autoriser
+   l'accès à la position de vos maisons : l'intégration y trouve leur station
+   la plus proche et leurs vigilances, et surveille la pluie de l'heure à
+   venir.
+3. Ouvrez l'onglet **Configuration** et cliquez sur **Tester FMI**. La
+   réponse donne la température actuelle de votre première maison, la station
+   qui l'a mesurée et ses vigilances.
+
+C'est tout : le widget météo de votre tableau de bord affiche maintenant le
+FMI. Si une autre intégration météo est installée, choisissez le fournisseur
+dans les réglages du widget météo.
+
+Gladys 5.2 ou plus récent est nécessaire.
 
 ## Configuration
 
-1. Ouvrez l'onglet **Configuration** de l'intégration.
-2. Renseignez la **latitude** et la **longitude** que la station météo de
-   démonstration doit observer (Paris par défaut), et choisissez votre unité
-   de température. L'**intervalle de rafraîchissement** règle la fréquence
-   de lecture de la station météo et de la puissance de la prise : toutes
-   les 5 minutes par défaut, toutes les minutes au plus.
-3. Enregistrez : les appareils apparaissent dans l'onglet **Découverte**,
-   prêts à être ajoutés.
+Rien n'est obligatoire.
 
-Le réglage **Préférer la connexion locale** pilote la prise de
-démonstration : elle affiche en badge le canal réellement utilisé (local ou
-cloud), avec un point orange quand elle fonctionne en mode dégradé (local
-refusé, bascule cloud).
+- **Unités des valeurs de scène** — les unités des températures, du vent et
+  des précipitations que l'intégration met dans les variables de scène.
+  **Automatique** suit le système d'unités du dernier utilisateur qui a
+  consulté la météo ; choisissez **Métrique** ou **US** pour le fixer. Le
+  widget météo suit toujours la préférence de chaque utilisateur.
+- **Langue des textes de scène** — la langue des phrases que l'intégration
+  met dans les variables de scène (« Vigilance vent orange émise pour
+  Uusimaa… ») : anglais, français, allemand ou espagnol. Français par
+  défaut ; **Automatique** suit la langue de votre Gladys. Les textes du FMI
+  lui-même (titre, détails, zone) sont en anglais.
 
-## Actions
+## Fréquence de mise à jour et conditions du FMI
 
-- **Tester le fournisseur météo** — effectue une requête en direct vers
-  Open-Meteo et affiche la température et l'humidité actuelles sous le
-  bouton.
-- **Identifier un appareil** — choisissez un de vos appareils dans la liste
-  et il se signale (la lampe de démonstration « clignote » dans les logs).
+Le FMI publie ses données librement, dans certaines limites (20 000 requêtes
+par jour et 600 par tranche de 5 minutes et par utilisateur). L'intégration
+reste très en dessous :
+
+- elle **met à jour toutes les 30 minutes environ**, plus quelques minutes
+  au hasard pour que tous les Gladys n'appellent pas à la même seconde ;
+- par maison, elle fait **un appel de prévision et un appel d'observations**
+  (les maisons au même endroit les partagent), et **un appel de vigilances**
+  pour toutes : environ 150 requêtes par jour pour une maison. Ils
+  alimentent tout : le tableau de bord, la discussion et les scènes. Ouvrir
+  le tableau de bord ne coûte rien : Gladys est servi depuis la mémoire ;
+- elle envoie des coordonnées arrondies à 4 décimales (une dizaine de mètres)
+  et une identification de l'application
+  (`gladys-fmi/<version> github.com/guim31/gladys-fmi`) ;
+- elle se met en pause si le FMI demande de ralentir (erreur 429) ou refuse
+  les requêtes (erreur 403).
+
+Pendant une panne, la dernière prévision reste visible 3 heures au plus. Une
+mesure de station de plus de 90 minutes n'est plus utilisée.
 
 ## Scènes
 
-L'intégration ajoute ses propres cartes à l'éditeur de scènes (Gladys 5.1
-ou plus récent), dans la catégorie **Intégrations** :
+L'intégration ajoute ses cartes à l'éditeur de scènes, dans la catégorie
+**Intégrations**. Le champ **Maison** liste vos maisons.
 
-- **Mouvement détecté** (déclencheur) — lance la scène quand un détecteur
-  de démonstration voit bouger quelque chose. Choisissez éventuellement le
-  détecteur et ce qui a bougé (personne, animal) ; laissés vides, toute
-  détection correspond. Les actions suivantes peuvent lire ce qui a bougé
-  avec `{{triggerEvent.data.target}}`.
-- **Identifier un appareil** (action) — fait se signaler l'appareil choisi.
-  Elle indique si l'appareil a pu se signaler, pour que les actions
-  suivantes puissent en dépendre.
+### Vigilance FMI modifiée
 
-## Tableau de bord
+Déclencheur : lance la scène quand une vigilance dont la zone contient une
+maison est **émise**, **relevée** (jaune → orange…), **abaissée**, **mise à
+jour** (même niveau, nouveau texte ou nouveaux horaires) ou **levée** (annulée
+ou terminée). Une maison a au plus une vigilance par phénomène : quand le FMI
+en émet plusieurs, le niveau le plus haut compte. Il ne se déclenche jamais à
+la première lecture après un redémarrage, ni quand le FMI est injoignable.
 
-Ajoutez le widget **État de la démo** à un tableau de bord : il affiche en
-direct la température de la station météo et la puissance de la prise du
-bureau, la connexion utilisée par la prise (en orange si dégradée) et la
-position observée. Son bouton **Identifier la lampe** fait se signaler la
-lampe de démonstration.
+Filtres facultatifs (vides : tout correspond) :
+
+- **Maison** ;
+- **Changement** : émise, relevée, abaissée, mise à jour, levée ou terminée ;
+- **Niveau** : jaune, orange, rouge ;
+- **Phénomène** : vent, pluie, orages, grand froid, fortes chaleurs, feux de
+  forêt, conditions de circulation, sécurité des piétons, UV, niveau de la
+  mer, autre.
+
+Variables pour les actions suivantes : la maison, la zone de la vigilance
+(`Uusimaa`…), le changement (`issued`, `upgraded`, `downgraded`, `updated`,
+`lifted`), le niveau (`yellow`, `orange`, `red`), le phénomène (`wind`,
+`rain`, `forest_fire`…), le titre et les détails du FMI (en anglais), et un
+**résumé** prêt à envoyer, par exemple : « Vigilance vent orange émise pour
+Uusimaa, du dim. 25 oct., 08:00 au lun. 26 oct., 14:00. »
+
+### Pluie ou neige attendue dans l'heure
+
+Déclencheur : lance la scène quand la prévision horaire annonce des
+précipitations cette heure-ci ou la suivante, là où la mise à jour précédente
+n'en annonçait pas. Il se déclenche une fois par épisode, au plus une fois par
+heure et par maison, et jamais à la première mise à jour après un
+redémarrage.
+
+Filtres facultatifs (vides : tout correspond) :
+
+- **Maison** ;
+- **Précipitations** : pluie, neige fondue ou neige ;
+- **Intensité** : faible, modérée ou forte.
+
+Variables pour les actions suivantes : le nom de la maison, le type de
+précipitations (`rain`, `sleet`, `snow`), l'intensité (`light`, `moderate`,
+`heavy`), la présence d'orage, les minutes avant le début (0 si cela tombe
+déjà), la quantité attendue sur cette heure, sa probabilité et un **résumé**
+prêt à envoyer, par exemple : « Pluie faible attendue dans 35 minutes
+(probabilité 60 %). »
+
+### Obtenir les précipitations de l'heure à venir
+
+Action : indique à la scène si de la pluie ou de la neige arrive dans l'heure
+(**Précipitations attendues** : oui ou non), quand, quoi, avec quelle
+intensité, et le même résumé. Laissez **Maison** vide pour votre première
+maison qui a une position. Si aucune prévision horaire ne couvre l'heure,
+**Prévision disponible** vaut non : ne le lisez pas comme « sec ».
+
+### Obtenir la prévision du jour
+
+Action : lit la prévision d'**aujourd'hui** (le reste de la journée) ou de
+**demain** pour une maison, et renvoie :
+
+- le ciel, en code Gladys (`clear`, `partly-cloudy`, `rain`, `snow`…) et en
+  toutes lettres (« Pluie ») ;
+- les températures minimale et maximale ;
+- les précipitations du jour et leur plus forte probabilité ;
+- le vent le plus fort et la rafale la plus forte ;
+- un **résumé**, par exemple : « Demain : neige, de -3 à 1 °C, 4,2 mm de
+  précipitations (probabilité 70 %). »
+
+### Obtenir les vigilances FMI
+
+Action : lit les vigilances d'une maison, en cours ou annoncées, et renvoie
+s'il y a au moins une vigilance, combien, le **niveau le plus haut** (`none`,
+`yellow`, `orange`, `red`), si une vigilance est **en cours**, le phénomène,
+la zone et le titre de la plus haute, et un **résumé**, par exemple :
+« 1 vigilance FMI pour Maison : Vigilance vent jaune, du dim. 25 oct., 08:00
+au lun. 26 oct., 14:00. » Si le FMI est injoignable, **Vigilances
+disponibles** vaut non.
+
+## Exemples de scènes
+
+- **Tempête en approche** : déclencheur « Vigilance FMI modifiée », niveau
+  orange ou rouge, changement émise ou relevée, puis une notification avec le
+  **résumé** et les volets fermés.
+- **Trottoirs glissants** : déclencheur « Vigilance FMI modifiée », phénomène
+  sécurité des piétons, changement émise, puis un rappel de mettre les
+  crampons avant de sortir.
+- **Rentrer le linge** : déclencheur « Pluie ou neige attendue dans l'heure »,
+  puis une notification avec la variable **résumé**.
+- **Météo du matin** : à 7 h, action « Obtenir la prévision du jour »
+  (aujourd'hui), puis « Obtenir les vigilances FMI », puis un message avec
+  les deux résumés.
+
+## Limites
+
+- **Développée sans Gladys installé en Finlande** : l'intégration est testée
+  sur de vraies réponses du FMI (Helsinki, Tampere, Rovaniemi, et les
+  vigilances du 23 octobre 2026). Vos retours sont les bienvenus.
+- **Seulement la Finlande et ses environs** (voir plus haut).
+- **La station est la plus proche dans un rayon de 50 km** qui a mesuré la
+  température dans les 90 dernières minutes. Les stations routières et
+  portuaires ne mesurent pas tout : la prévision complète ce qui leur manque.
+  Sans station, la météo actuelle est la prévision de l'heure.
+- **Le ciel actuel** (dégagé, pluie…) vient de la prévision, pas de la
+  station.
+- **Vigilances en anglais** : l'intégration lit les textes anglais du FMI et
+  traduit le niveau, le phénomène et le changement, pas les détails ni les
+  noms de zones.
+- **Vigilances terrestres seulement** : les vigilances des zones maritimes
+  (vent, vagues, givrage, orages en mer) concernent les bateaux et sont
+  écartées ; celle du niveau de la mer, qui inonde les rivages, est gardée.
+  Les avis verts sont écartés.
+- **La zone d'une vigilance** est son polygone, tel que le publie le FMI,
+  plus 2 km pour les côtes et les îles qu'il simplifie.
+- **L'heure est le pas le plus fin**, sur 9 jours environ.
+- **Aujourd'hui** ne contient que les heures encore à venir.
+- **Les jours** sont découpés dans le fuseau horaire de Gladys, pour toutes
+  les maisons.
+- L'intégration nécessite Gladys 5.2 ou plus récent.
 
 ## Dépannage
 
-L'intégration journalise tout ce qu'elle fait : consultez les logs de
-l'intégration depuis l'interface Gladys (ou `docker logs` sur l'hôte) avec
-`LOG_LEVEL=debug` pour le détail complet.
+- **« Aucune maison de Gladys n'a de position »** — renseignez la position de
+  votre maison dans **Paramètres → Maisons**.
+- **« FMI n'a pas de prévision utilisable pour la position de votre
+  maison »** — la maison est hors de la zone du FMI (loin de la Finlande), ou
+  sa position est fausse : vérifiez-la dans **Paramètres → Maisons**.
+- **« FMI demande de ralentir »** — trop de requêtes depuis votre connexion
+  Internet : l'intégration attend et réessaie d'elle-même.
+- **« FMI refuse les requêtes (HTTP 403) »** — mettez à jour l'intégration.
+- **« FMI est injoignable pour le moment »** — Gladys n'arrive pas à joindre
+  `opendata.fmi.fi` ou `alerts.fmi.fi` : vérifiez son accès à Internet.
+  L'intégration réessaie au bout de 5 minutes, puis de moins en moins
+  souvent.
+- **Le test ne cite aucune station** — aucune station du FMI à moins de 50 km
+  n'a mesuré la température récemment : la météo actuelle vient de la
+  prévision.
+- **Le tableau de bord affiche toujours un autre fournisseur** — ouvrez les
+  réglages du widget météo et choisissez FMI.
+- **Journaux** : l'onglet **Journaux** de l'intégration (ou `docker logs` sur
+  l'hôte) montre le démarrage, chaque changement de vigilance, les problèmes et
+  le retour du FMI, une fois chacun. Démarrez le conteneur avec
+  `LOG_LEVEL=debug` pour voir chaque mise à jour.
+
+## Confidentialité
+
+Les coordonnées de vos maisons, arrondies à une dizaine de mètres, sont
+envoyées au FMI pour obtenir leur prévision et les stations alentour, et nulle
+part ailleurs. Le flux des vigilances est le même pour tous : sa requête ne
+contient aucune position. Ni compte, ni clé, rien n'est écrit sur le disque.
+
+## Crédits
+
+Observations, prévisions et vigilances : Source : Finnish Meteorological
+Institute ([en.ilmatieteenlaitos.fi](https://en.ilmatieteenlaitos.fi/)), sous
+licence [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.fr) ;
+les données sont converties au format météo de Gladys (unités, symboles,
+jours, alertes). Les symboles météo suivent la légende de
+[metno/weathericons](https://github.com/metno/weathericons) (MET Norway). Le
+code de prévision vient des intégrations
+[MET Norway](https://github.com/guim31/gladys-met-no) et
+[Met Éireann](https://github.com/guim31/gladys-met-eireann) du même auteur.

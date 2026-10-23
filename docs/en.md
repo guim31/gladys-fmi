@@ -1,61 +1,262 @@
-# Demo Devices Template
+# FMI
 
-This is the user documentation of the integration. Gladys re-hosts this file
-and shows a permanent **Documentation** link to it in the Configuration screen
-(in the user's language, with English as the fallback) — it is when
-configuring that the user needs it most. Keep the short onboarding hints in
-the `section` blocks of the manifest `config_schema`; put the long
-step-by-step (screenshots, troubleshooting…) here.
+The weather of Finland in Gladys, from the
+[Finnish Meteorological Institute](https://en.ilmatieteenlaitos.fi/) (FMI,
+Ilmatieteen laitos): the **measurements of the nearest weather station**, the
+forecast edited by its forecasters (hourly for about 9 days) and its
+**official weather warnings**. Open data: **no account, no API key**.
+
+Source: Finnish Meteorological Institute, data licensed under
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). This integration
+is a community project, not affiliated with FMI.
 
 ## What you get
 
-Six demo devices show up after installation: a weather station (real data
-from Open-Meteo), a switch, a dimmable light, a smart plug with power
-metering, a motion sensor and a camera.
+- **The Gladys weather widget and the chat assistant** use FMI: the current
+  weather measured by the nearest FMI station (temperature, humidity,
+  pressure, dew point, wind and gusts, cloud cover), completed by the
+  forecast for what the station does not measure, sunrise and sunset, the
+  next 24 hours with the precipitation of each hour and its probability, and
+  the next 8 days. Day and night have their own icons. Everything is shown
+  in **°C, m/s and mm** or in **°F, mph and inches**, following the unit
+  system of each Gladys user.
+- **The FMI warnings of your area** (yellow, orange, red: wind, rain,
+  thunderstorms, low or high temperature, forest fire, traffic weather,
+  pedestrian safety, UV, sea level), shown as alerts on the weather widget,
+  in force or announced. The built-in **weather alert** scene trigger of
+  Gladys works with them, and fires within a minute of a change.
+- **Scene trigger "FMI warning changed"**: a warning issued, upgraded,
+  downgraded, updated or lifted, with its colour and a sentence in your
+  language.
+- **Scene trigger "Rain or snow expected within the hour"**.
+- **Scene action "Get the precipitation of the next hour"**.
+- **Scene action "Get the forecast of the day"** (today or tomorrow).
+- **Scene action "Get the FMI warnings"**: the highest level for your house,
+  to gate a scene on it.
+
+No extra widget: the Gladys weather widget already shows the current
+weather, the forecast and the warnings.
+
+**Finland only.** FMI's edited forecast covers Finland and the Nordic
+countries around it, its stations and warnings Finland; elsewhere there is
+no forecast and Gladys uses another weather provider. For a worldwide
+forecast, install **MET Norway** instead: it covers Finland too, but without
+the stations nor the Finnish warnings.
+
+## Installation
+
+1. Check that your house has a location in Gladys: **Settings → Houses**,
+   then the address or the position on the map. The integration refreshes
+   the weather of every house that has one.
+2. Install **FMI** from the integration store (or **Integrations → Install
+   from GitHub** with the address `https://github.com/guim31/gladys-fmi`).
+   Gladys asks you to allow access to the location of your houses: it finds
+   their nearest station and their warnings, and watches the rain of the
+   next hour.
+3. Open the **Configuration** tab and click **Test FMI**. The answer shows
+   the current temperature of your first house, the station that measured
+   it and its warnings.
+
+That's it: the weather widget of your dashboard now shows FMI. If another
+weather integration is installed, pick the provider in the settings of the
+weather widget.
+
+Gladys 5.2 or later is required.
 
 ## Configuration
 
-1. Open the **Configuration** tab of the integration.
-2. Set the **latitude** and **longitude** the demo weather station should
-   observe (they default to Paris), and pick your temperature unit.
-   The **refresh interval** sets how often the weather station and the
-   plug's power are read: every 5 minutes by default, every minute at most.
-3. Save: the devices appear in the **Discovery** tab, ready to be added.
+Nothing is mandatory.
 
-The **Prefer the local connection** toggle drives the demo plug: it reports
-the channel it actually uses as a badge (local or cloud), with an orange dot
-when it runs degraded (local refused, cloud fallback).
+- **Units of the scene values** — the units of the temperatures, wind and
+  precipitation the integration puts in scene variables. **Automatic**
+  follows the unit system of the last user who looked at the weather; pick
+  **Metric** or **US** to set it. The weather widget always follows each
+  user's own preference.
+- **Language of the scene texts** — the language of the sentences the
+  integration puts in scene variables ("Orange wind warning issued for
+  Uusimaa…"): English, French, German or Spanish. French by default;
+  **Automatic** follows the language of your Gladys. The texts of FMI itself
+  (headline, details, area) are in English.
 
-## Actions
+## Refresh rate and FMI's terms
 
-- **Test the weather provider** — performs a live request to Open-Meteo and
-  shows the current temperature and humidity under the button.
-- **Identify a device** — pick one of your devices in the list and it will
-  signal itself (the demo light "blinks" in the logs).
+FMI publishes its data openly, within limits (20,000 requests a day and 600
+every 5 minutes per user). The integration stays far below them:
+
+- it **refreshes about every 30 minutes**, plus a few random minutes so that
+  every Gladys does not call at the same second;
+- per house, it makes **one forecast call and one observation call** (houses
+  at the same place share them), and **one warning call** for all of them:
+  about 150 requests a day for one house. These feed everything: the
+  dashboard, the chat and the scenes. Opening the dashboard costs nothing:
+  Gladys is served from memory;
+- it sends coordinates rounded to 4 decimals (about 10 m) and an
+  identification of the application
+  (`gladys-fmi/<version> github.com/guim31/gladys-fmi`);
+- it pauses if FMI asks to slow down (error 429) or refuses the requests
+  (error 403).
+
+During an outage, the last forecast stays visible for 3 hours at most. A
+station measurement older than 90 minutes is no longer used.
 
 ## Scenes
 
-The integration adds its own cards to the scene editor (Gladys 5.1 or
-later), under the **Integrations** category:
+The integration adds its cards to the scene editor, in the **Integrations**
+category. The **House** field lists your houses.
 
-- **Motion detected** (trigger) — starts the scene when a demo motion sensor
-  sees something move. Optionally pick the sensor and what moved (person,
-  animal); left empty, any detection matches. The following actions can
-  read what moved with `{{triggerEvent.data.target}}`.
-- **Identify a device** (action) — makes the chosen device signal itself.
-  It returns whether the device could signal itself, so the following
-  actions can depend on it.
+### FMI warning changed
 
-## Dashboard
+Trigger: starts the scene when a warning whose area holds a house is
+**issued**, **upgraded** (yellow → orange…), **downgraded**, **updated**
+(same level, new text or times) or **lifted** (cancelled or ended). A house
+has at most one warning per phenomenon: when FMI issues several, the highest
+level counts. It never fires on the first reading after a restart, nor when
+FMI cannot be reached.
 
-Add the **Demo status** widget to a dashboard: it shows the live
-temperature of the weather station and the power of the office plug, the
-connection the plug currently uses (orange when degraded) and the observed
-location. Its **Identify the light** button makes the demo light signal
-itself.
+Optional filters (empty: everything matches):
+
+- **House**;
+- **Change**: issued, upgraded, downgraded, updated, lifted or ended;
+- **Level**: yellow, orange, red;
+- **Phenomenon**: wind, rain, thunderstorm, low temperature, high
+  temperature, forest fire, traffic weather, pedestrian safety, UV, sea
+  level, other.
+
+Variables for the next actions: the house, the warning area (`Uusimaa`…), the
+change (`issued`, `upgraded`, `downgraded`, `updated`, `lifted`), the level
+(`yellow`, `orange`, `red`), the phenomenon (`wind`, `rain`, `forest_fire`…),
+the headline and the details of FMI (in English), and a **summary** ready to
+send, for example: "Orange wind warning issued for Uusimaa, from Sun 25 Oct,
+08:00 to Mon 26 Oct, 14:00."
+
+### Rain or snow expected within the hour
+
+Trigger: starts the scene when the hourly forecast shows precipitation this
+hour or the next one, where the previous refresh showed none. It fires once
+per event, at most once an hour per house, and never on the first refresh
+after a restart.
+
+Optional filters (empty: everything matches):
+
+- **House**;
+- **Precipitation**: rain, sleet or snow;
+- **Intensity**: light, moderate or heavy.
+
+Variables for the next actions: the name of the house, the kind of
+precipitation (`rain`, `sleet`, `snow`), the intensity (`light`,
+`moderate`, `heavy`), whether there is thunder, the minutes until it starts
+(0 if it is already falling), the amount expected that hour, its probability
+and a **summary** ready to send, for example: "Light rain expected in 35
+minutes (60% chance)."
+
+### Get the precipitation of the next hour
+
+Action: tells the scene whether rain or snow is coming within the hour
+(**Precipitation expected**: yes or no), when, what, how hard, and the same
+summary. Leave **House** empty for your first house that has a location. If
+no hourly forecast covers the hour, **Forecast available** is no: do not
+read it as dry.
+
+### Get the forecast of the day
+
+Action: reads the forecast of **today** (the rest of the day) or
+**tomorrow** for a house, and returns:
+
+- the sky, as a Gladys code (`clear`, `partly-cloudy`, `rain`, `snow`…) and
+  in words ("Rain");
+- the minimum and maximum temperatures;
+- the precipitation of the day and its highest probability;
+- the strongest wind and the strongest gust;
+- a **summary**, for example: "Tomorrow: snow, -3 to 1 °C, 4.2 mm of
+  precipitation (70% chance)."
+
+### Get the FMI warnings
+
+Action: reads the warnings of a house, in force or announced, and returns
+whether there is at least one warning, how many, the **highest level**
+(`none`, `yellow`, `orange`, `red`), whether a warning is **in effect now**,
+the phenomenon, the area and the headline of the highest one, and a
+**summary**, for example: "1 FMI warning for Home: Yellow wind warning, from
+Sun 25 Oct, 08:00 to Mon 26 Oct, 14:00." If FMI cannot be reached,
+**Warnings available** is no.
+
+## Scene examples
+
+- **Storm coming**: trigger "FMI warning changed", level orange or red,
+  change issued or upgraded, then a notification with the **summary** and
+  the shutters closed.
+- **Slippery pavements**: trigger "FMI warning changed", phenomenon
+  pedestrian safety, change issued, then a reminder to put on the shoe
+  spikes before leaving.
+- **Bring the washing in**: trigger "Rain or snow expected within the hour",
+  then a notification with the **summary** variable.
+- **Morning weather**: at 7:00, action "Get the forecast of the day"
+  (today), then "Get the FMI warnings", then a message with both summaries.
+
+## Limits
+
+- **Developed without a Gladys running in Finland**: the integration is
+  tested against real answers of FMI (Helsinki, Tampere, Rovaniemi, and the
+  warnings of 23 October 2026). Feedback welcome.
+- **Finland and its surroundings only** (see above).
+- **The station is the nearest one within 50 km** that measured the
+  temperature in the last 90 minutes. Road and port stations do not measure
+  everything: the forecast fills in what they lack. Without a station, the
+  current weather is the forecast of the hour.
+- **The current sky** (clear, rain…) comes from the forecast, not from the
+  station.
+- **Warnings in English**: the integration reads FMI's English texts and
+  translates the level, the phenomenon and the change, not the details nor
+  the area names.
+- **Land warnings only**: the warnings for the sea areas (wind, waves,
+  icing, thunderstorms at sea) concern boats and are left out; the sea
+  level warning, which floods shores, is kept. Green notices are left out.
+- **The area of a warning** is its polygon, as published by FMI, plus 2 km
+  for the coasts and islands it simplifies.
+- **The hour is the finest step**, for about 9 days.
+- **Today** only holds the hours still to come.
+- **The days** are cut in the time zone of Gladys, for every house.
+- The integration needs Gladys 5.2 or later.
 
 ## Troubleshooting
 
-The integration logs everything it does: check the integration logs from the
-Gladys UI (or `docker logs` on the host) with `LOG_LEVEL=debug` for the full
-detail.
+- **"No house of Gladys has a location"** — set the location of your house in
+  **Settings → Houses**.
+- **"FMI has no usable forecast for the location of your house"** — the
+  house is outside the area of FMI (far from Finland), or its location is
+  wrong: check it in **Settings → Houses**.
+- **"FMI asks to slow down"** — too many requests from your Internet
+  connection: the integration waits and retries by itself.
+- **"FMI refuses the requests (HTTP 403)"** — update the integration.
+- **"FMI is unreachable for now"** — Gladys cannot reach `opendata.fmi.fi`
+  or `alerts.fmi.fi`: check its Internet access. The integration retries
+  after 5 minutes, then less and less often.
+- **The test does not name a station** — no FMI station within 50 km
+  measured the temperature recently: the current weather comes from the
+  forecast.
+- **The dashboard still shows another provider** — open the settings of the
+  weather widget and pick FMI.
+- **Logs**: the **Logs** tab of the integration (or `docker logs` on the
+  host) shows the start, each warning change, the problems and the return of
+  FMI, once each. Start the container with `LOG_LEVEL=debug` to see every
+  refresh.
+
+## Privacy
+
+The coordinates of your houses, rounded to about 10 m, are sent to FMI to
+get their forecast and the stations around them, and nowhere else. The
+warning feed is the same for everyone: its request carries no location. No
+account, no key, nothing is written to disk.
+
+## Credits
+
+Observations, forecasts and warnings: Source: Finnish Meteorological
+Institute ([en.ilmatieteenlaitos.fi](https://en.ilmatieteenlaitos.fi/)),
+licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/);
+the data are converted to the Gladys weather format (units, symbols, days,
+alerts). The weather symbols follow the legend of
+[metno/weathericons](https://github.com/metno/weathericons) (MET Norway).
+The forecast code comes from the
+[MET Norway](https://github.com/guim31/gladys-met-no) and
+[Met Éireann](https://github.com/guim31/gladys-met-eireann) integrations of
+the same author.

@@ -30,17 +30,37 @@ pushing.
 
 ## Architecture
 
+A **weather** integration (manifest `type: "weather"`): no devices, a provider
+API. Gladys asks for the weather of a house (`onWeatherGet`), the integration
+answers in the pivot format of the core from what it keeps in memory: the
+latest measurements of the nearest FMI station, FMI's edited forecast, and the
+FMI warnings whose area holds the house as `alerts`.
+
 ```
-index.js                          SDK wiring only: handlers registered before connect()
-src/devices/index.js              registry of the device blueprints + dispatch helpers
-src/devices/<type>.js             one device type per file (buildDevice, onPoll, onSetValue...)
-src/scenes.js                     scene action handlers (manifest `scene_actions`)
-src/widgets.js                    dashboard widget handlers (manifest `widgets`)
+index.js                          SDK wiring only: createApp() then connect()
+src/app.js                        the integration on an injected client: handlers, status, warnings, lifecycle
+src/api.js                        the three FMI requests (addresses, User-Agent, error kinds)
+src/wfs.js                        WFS multipointcoverage reader: fields, rows, stations
+src/forecast.js                   forecast → slim metric forecast (hourly points + their hour), FMI symbols
+src/observations.js               the nearest station with a recent temperature, its latest values
+src/forecast-store.js             cache per location (forecast + observation); 30 min floor, 429/403 pauses
+src/scheduler.js                  refresh timer: 30 min + 0-5 min jitter, retries
+src/warnings.js                   CAP feed: parsing, supersession, polygons, one warning per phenomenon, pivot alerts, diff, store
+src/pivot.js                      slim forecast (+ observation) → pivot weather (current, 24 hours, 8 days, alerts)
+src/daily.js                      days cut at local midnights, precipitation timeline
+src/symbols.js                    MET Norway symbol codes → Gladys conditions
+src/sun.js, src/time.js           computed sunrise/sunset (NOAA), local days (TZ)
+src/next-hour.js                  precipitation within the hour (trigger + action)
+src/scene-triggers.js             "precipitation_expected" (dry → wet, baseline, 1 h cooldown)
+src/warning-triggers.js           "warning_changed" (issued/upgraded/downgraded/updated/lifted, baseline)
+src/scene-actions.js              "get_precipitation_next_hour", "get_day_forecast", "get_warnings"
+src/houses.js                     the houses of Gladys (getHouses, `location: true`)
+src/failure-log.js                repeated failures logged once (warn, debug, then info on recovery)
 src/config.js                     DEFAULT_CONFIG (mirrors the manifest defaults) + normalization
-src/weather.js                    example driver (Open-Meteo)
-gladys-assistant-integration.json manifest: name, config_schema, actions, image...
-docs/en.md, docs/fr.md            user documentation, re-hosted by Gladys (mandatory)
-test/                             node --test, against the SDK's fake Gladys (integration-sdk/testing)
+src/texts.js, src/units.js        texts in en/fr/de/es, metric → us conversions
+gladys-assistant-integration.json manifest: name, config_schema, actions, scene cards, image...
+docs/{en,fr,de,es}.md             user documentation, re-hosted by Gladys (en and fr mandatory)
+test/                             node --test, against the SDK's fake Gladys and real API responses
 .github/scripts/release.mjs       release helpers (manifest bump, changelog), tested in test/
 ```
 
@@ -70,8 +90,9 @@ test/                             node --test, against the SDK's fake Gladys (in
   `type: "provider"`: 5.1.0). `test/manifest.test.js` ties the manifest to the
   code (defaults, action, scene and widget handlers): change both sides
   together.
-- **User-facing text** is bilingual (English and French): action messages,
-  manifest texts, and `docs/en.md` / `docs/fr.md`, kept in sync.
+- **User-facing text** exists in English, French, German and Spanish: action
+  messages, scene texts, manifest texts, and `docs/{en,fr,de,es}.md`, kept in
+  sync (`test/i18n.test.js`).
 - **Style.** Prettier formats, ESLint catches mistakes. Comments explain why,
   in English. Tests never touch the network.
 
@@ -233,3 +254,54 @@ long, et sur un « Sie »/« Ihr… » de politesse en allemand. Le store exige 
 - Docs `en`, `fr`, `de`, `es` avec les mêmes sections.
 - Chauffe, ouverture, sécurité : ne rien rendre pilotable « comme un thermostat » ou par un assistant
   vocal quand une erreur serait dangereuse (leçon d'OctoPrint).
+
+## FMI (cette intégration)
+
+**API** (données ouvertes, sans clé, CC BY 4.0, « Source: Finnish Meteorological Institute ») :
+
+- Prévision : WFS `https://opendata.fmi.fi/wfs`, requête stockée
+  `fmi::forecast::edited::weather::scandinavia::point::multipointcoverage`, `latlon`, `timestep=60`,
+  `endtime` à +10 j, `parameters` explicites (`FORECAST_PARAMETERS`). Horaire sur ~9,5 j, puis NaN.
+- Observations : `fmi::observations::weather::multipointcoverage` par `bbox` (±0,5° lat, ±1° lon),
+  `timestep=10`, depuis 70 min ; station la plus proche à moins de 50 km avec une température de
+  moins de 90 min.
+- Vigilances : flux CAP Atom `https://alerts.fmi.fi/cap/feed/atom_en-GB.xml` (profil
+  https://alerts.fmi.fi/cap/profile/v1.1.0), avec un polygone par zone.
+- Limites FMI : 20 000 requêtes/jour, 600/5 min. Ici : 2 par maison + 1 flux, toutes les 30 min.
+- Réponses réelles du 23/10/2026 dans `test/fixtures/` (voir leur README).
+
+**Pièges découverts.**
+
+- Le format `simple` répète un élément XML par valeur : **2,7 Mo** pour 10 jours. Le format
+  `multipointcoverage` (positions « lat lon epoch » + table de valeurs, même ordre que les
+  `swe:field`) fait 40 Ko : c'est lui qu'on lit (`wfs.js`), sans dépendance XML.
+- Sans `endtime`, la prévision s'arrête à +72 h (31 paramètres par défaut).
+- `Precipitation1h` (et le symbole qui va avec) est le cumul de **l'heure qui se termine** à la
+  ligne : la période est rattachée au point qui la commence, et l'heure en cours reçoit un point
+  avec les valeurs de la première ligne (comme Met Éireann).
+- Hors domaine (Paris) : **HTTP 400** « No data available for 'Saint-Merri'! » → classé
+  `invalid` (« pas de prévision », le cœur passe au fournisseur suivant). Le second
+  `ExceptionText` recopie l'URL : on ne lit que le premier.
+- Observations par `latlon` + `maxlocations=1` : **réponse vide** pour le centre d'Helsinki ;
+  la `bbox` est fiable. Les stations routières et portuaires n'ont ni vent, ni pression, ni
+  nébulosité : chaque valeur vient de la station retenue, la prévision complète le reste
+  (`pivot.js`), jamais une autre station. `n_man` est en octas (9 = ciel invisible).
+- `FeelsLike` correspond à la température prévue : retiré quand la température affichée est
+  mesurée.
+- CAP : un `<info>` par langue (fi, sv, en, ordre libre) ; phénomène par `<eventCode>`, jamais
+  `<event>` ; `severity` Minor/Moderate/Severe/Extreme = vert/jaune/orange/rouge (vert écarté).
+  Chaque mise à jour **réémet toutes les vigilances** avec de nouveaux identifiants et des
+  `<references>` vers toutes les précédentes : les identifiants ne sont pas une identité. On écarte
+  les alertes référencées et les `Cancel`, puis une maison a **une vigilance par phénomène**
+  (niveau le plus haut, début le plus tôt, fin la plus tardive), comme le déclencheur d'alerte du
+  cœur (identité = `type`). « Mise à jour » = titre ou horaires changés, pas l'heure d'envoi.
+- Zones : polygones des régions (ISO 3166-2) ou de leurs parties, côte simplifiée : point dans le
+  polygone, ou à moins de 2 km du bord (îles, rivages). Vigilances maritimes écartées sauf
+  `seaWaterHeight` (niveau de la mer → `coastal`).
+- Types du pivot : wind, rain, thunderstorm, cold, heat, coastal ; feux de forêt, circulation,
+  piétons, UV sans `type` (le cœur l'ignorerait) mais avec leur propre filtre dans le déclencheur
+  maison.
+
+**Choix (à revoir si besoin).** Type `weather` comme Met Éireann et MET Norway (pas d'appareil
+« Vigilances » : B.18 interdit toute surface d'appareil à ce type). Pas de réglage de zone : le
+polygone suffit. Ciel actuel tiré de la prévision (le code `wawa` des stations n'est pas lu).
