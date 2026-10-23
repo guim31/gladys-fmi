@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wfs:FeatureCollection
+  timeStamp="2026-10-23T23:11:38Z"
+  numberMatched="1"
+  numberReturned="1"
+  xmlns:wfs="http://www.opengis.net/wfs/2.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  xmlns:om="http://www.opengis.net/om/2.0"
+  xmlns:ompr="http://inspire.ec.europa.eu/schemas/ompr/3.0"
+  xmlns:omso="http://inspire.ec.europa.eu/schemas/omso/3.0"
+  xmlns:gml="http://www.opengis.net/gml/3.2"
+  xmlns:gmd="http://www.isotc211.org/2005/gmd"
+  xmlns:gco="http://www.isotc211.org/2005/gco"
+  xmlns:swe="http://www.opengis.net/swe/2.0"
+  xmlns:gmlcov="http://www.opengis.net/gmlcov/1.0"
+  xmlns:sam="http://www.opengis.net/sampling/2.0"
+  xmlns:sams="http://www.opengis.net/samplingSpatial/2.0"
+  xmlns:target="http://xml.fmi.fi/namespace/om/atmosphericfeatures/1.1"
+  xsi:schemaLocation="http://www.opengis.net/wfs/2.0 http://schemas.opengis.net/wfs/2.0/wfs.xsd
+  http://www.opengis.net/gmlcov/1.0 http://schemas.opengis.net/gmlcov/1.0/gmlcovAll.xsd
+  http://www.opengis.net/sampling/2.0 http://schemas.opengis.net/sampling/2.0/samplingFeature.xsd
+  http://www.opengis.net/samplingSpatial/2.0 http://schemas.opengis.net/samplingSpatial/2.0/spatialSamplingFeature.xsd
+  http://www.opengis.net/swe/2.0 http://schemas.opengis.net/sweCommon/2.0/swe.xsd
+  http://inspire.ec.europa.eu/schemas/ompr/3.0 https://inspire.ec.europa.eu/schemas/ompr/3.0/Processes.xsd
+  http://inspire.ec.europa.eu/schemas/omso/3.0 https://inspire.ec.europa.eu/schemas/omso/3.0/SpecialisedObservations.xsd
+  http://xml.fmi.fi/namespace/om/atmosphericfeatures/1.1 https://xml.fmi.fi/schema/om/atmosphericfeatures/1.1/atmosphericfeatures.xsd">
+
+  <wfs:member>
+    <omso:GridSeriesObservation gml:id="WFS-VBjK6yaFBeZ.ouSmAB7pEjqQWAqJTowroWbbpdOt.Lnl5dsPTTv3c3Trvlw9NGXk6dbeuzpp4b9O7pj39svLDnywtLFlz6d1TTty2qv4VTd0_tiNbFv67smndnhb_GBEoLBy6GEbIAcvkP6bd_TkARKCwcuhhHCAHL5D.m3_05AMbHy51qRaFOO6dNGTVwzsu7JU07ctqr.FU3ZMMYjO15fPffyyVOjXl899_LJf39svLvy09MOLZliZmzD0y8.kTM2b8eHZlrUzab8aSu69MzhrbcPiJp59MO7HlpWroQGltw.IvDfj0c5wY5m9ty9Mu.hh5YduXpl5c6xujLbWh3532LDbp3Vod899iw26d1aHfJfYsNundWJy0VidMlZHK.x0VlcL_PLhrK3X9uHdWN2086yO.Hvha23Tz56d2epl8dKxp2Gc2t3XbPzU.mHpp37uc4TW49cOzT08yd2bfE1ufTD00791Tzwy1ob.GXdkw9MLc59N_LLk49cvLzf05K3Qs23S6db8XPLy7Yemnfu5unXfLh6aMvJ0629dnTTw36d3THv7ZeWHPlaHTTty0.mXhOo0Omnbltb92WsarUhg">
+
+                 <om:phenomenonTime>
+        <gml:TimePeriod gml:id="time1-1-1">
+          <gml:beginPosition>2026-10-23T22:11:00Z</gml:beginPosition>
+          <gml:endPosition>2026-10-23T23:11:00Z</gml:endPosition>
+        </gml:TimePeriod>
+      </om:phenomenonTime>
+      <om:resultTime>
+        <gml:TimeInstant gml:id="time2-1-1">
+          <gml:timePosition>2026-10-23T23:11:00Z</gml:timePosition>
+        </gml:TimeInstant>
+      </om:resultTime>
+
+     <om:procedure xlink:href="http://xml.fmi.fi/inspire/process/opendata"/>
+                 <om:parameter>
+                <om:NamedValue>
+                    <om:name xlink:href="https://inspire.ec.europa.eu/codeList/ProcessParameterValue/value/groundObservation/observationIntent"/>
+                    <om:value>
+			atmosphere
+                    </om:value>
+                </om:NamedValue>
+            </om:parameter>
+
+     <om:observedProperty  xlink:href="https://opendata.fmi.fi/meta?observableProperty=observation&amp;param=t2m,ws_10min,wg_10min,wd_10min,rh,td,r_1h,p_sea,n_man,vis,wawa&amp;language=eng"/>
+     	<om:featureOfInterest>
+        <sams:SF_SpatialSamplingFeature gml:id="sampling-feature-1-1-fmisid">
+
+          <sam:sampledFeature>
+		<target:LocationCollection gml:id="sampled-target-1-1">
+		    <target:member>
+		    <target:Location gml:id="obsloc-fmisid-101118-pos">
+		        <gml:identifier codeSpace="http://xml.fmi.fi/namespace/stationcode/fmisid">101118</gml:identifier>
+			<gml:name codeSpace="http://xml.fmi.fi/namespace/locationcode/name">Pirkkala Tampere-Pirkkala lentoasema</gml:name>
+			<gml:name codeSpace="http://xml.fmi.fi/namespace/locationcode/geoid">-16000006</gml:name>
+			<gml:name codeSpace="http://xml.fmi.fi/namespace/locationcode/wmo">2944</gml:name>
+			<target:representativePoint xlink:href="#point-101118"/>					
+			
+			
+			<target:region codeSpace="http://xml.fmi.fi/namespace/location/region">Pirkkala</target:region>	   			
+			
+		    </target:Location></target:member>
+		    <target:member>
+		    <target:Location gml:id="obsloc-fmisid-101124-pos">
+		        <gml:identifier codeSpace="http://xml.fmi.fi/namespace/stationcode/fmisid">101124</gml:identifier>
+			<gml:name codeSpace="http://xml.fmi.fi/namespace/locationcode/name">Tampere Härmälä</gml:name>
+			<gml:name codeSpace="http://xml.fmi.fi/namespace/locationcode/geoid">-16000156</gml:name>
+			<gml:name codeSpace="http://xml.fmi.fi/namespace/locationcode/wmo">2763</gml:name>
+			<target:representativePoint xlink:href="#point-101124"/>					
+			
+			
+			<target:region codeSpace="http://xml.fmi.fi/namespace/location/region">Tampere</target:region>	   			
+			
+		    </target:Location></target:member>
+		    <target:member>
+		    <target:Location gml:id="obsloc-fmisid-101150-pos">
+		        <gml:identifier codeSpace="http://xml.fmi.fi/namespace/stationcode/fmisid">101150</gml:identifier>
+			<gml:name codeSpace="http://xml.fmi.fi/namespace/locationcode/name">Hämeenlinna Katinen</gml:name>
+			<gml:name codeSpace="http://xml.fmi.fi/namespace/locationcode/geoid">-16000125</gml:name>
+			<gml:name codeSpace="http://xml.fmi.fi/namespace/locationcode/wmo">2754</gml:name>
+			<target:representativePoint xlink:href="#point-101150"/>					
+			
+			
+			<target:region codeSpace="http://xml.fmi.fi/namespace/location/region">Hämeenlinna</target:region>	   			
+			
+		    </target:Location></target:member>
+		    <target:member>
+		    <target:Location gml:id="obsloc-fmisid-101151-pos">
+		        <gml:identifier codeSpace="http://xml.fmi.fi/namespace/stationcode/fmisid">101151</gml:identifier>
+			<gml:name codeSpace="http://xml.fmi.fi/namespace/locationcode/name">Hattula Lepaa</gml:name>
+			<gml:name codeSpace="http://xml.fmi.fi/namespace/locationcode/geoid">-16000197</gml:name>
+			<gml:name codeSpace="http://xml.fmi.fi/namespace/locationcode/wmo">2704</gml:name>
+			<target:representativePoint xlink:href="#point-101151"/>					
+			
+			
+			<target:region codeSpace="http://xml.fmi.fi/namespace/location/region">Hattula</target:region>	   			
+			
+		    </target:Location></target:member>
+		    <target:member>
+		    <target:Location gml:id="obsloc-fmisid-101311-pos">
+		        <gml:identifier codeSpace="http://xml.fmi.fi/namespace/stationcode/fmisid">101311</gml:identifier>
+			<gml:name codeSpace="http://xml.fmi.fi/namespace/locationcode/name">Tampere Siilinkari</gml:name>
+			<gml:name codeSpace="http://xml.fmi.fi/namespace/locationcode/geoid">-16000074</gml:name>
+			<gml:name codeSpace="http://xml.fmi.fi/namespace/locationcode/wmo">2943</gml:name>
+			<target:representativePoint xlink:href="#point-101311"/>					
+			
+			
+			<target:region codeSpace="http://xml.fmi.fi/namespace/location/region">Tampere</target:region>	   			
+			
+		    </target:Location></target:member>
+		    <target:member>
+		    <target:Location gml:id="obsloc-fmisid-101317-pos">
+		        <gml:identifier codeSpace="http://xml.fmi.fi/namespace/stationcode/fmisid">101317</gml:identifier>
+			<gml:name codeSpace="http://xml.fmi.fi/namespace/locationcode/name">Juupajoki Hyytiälä</gml:name>
+			<gml:name codeSpace="http://xml.fmi.fi/namespace/locationcode/geoid">-16000089</gml:name>
+			<gml:name codeSpace="http://xml.fmi.fi/namespace/locationcode/wmo">2770</gml:name>
+			<target:representativePoint xlink:href="#point-101317"/>					
+			
+			
+			<target:region codeSpace="http://xml.fmi.fi/namespace/location/region">Juupajoki</target:region>	   			
+			
+		    </target:Location></target:member>
+		</target:LocationCollection>
+ 	   </sam:sampledFeature>
+          <sams:shape>
+            <gml:MultiPoint gml:id="mp-1-1-fmisid">
+              <gml:pointMember>
+              <gml:Point gml:id="point-101118" srsName="http://www.opengis.net/def/crs/EPSG/0/4258" srsDimension="2">
+                <gml:name>Pirkkala Tampere-Pirkkala lentoasema</gml:name>
+                <gml:pos>61.41940 23.62256 </gml:pos>
+            </gml:Point>
+	    </gml:pointMember>
+              <gml:pointMember>
+              <gml:Point gml:id="point-101124" srsName="http://www.opengis.net/def/crs/EPSG/0/4258" srsDimension="2">
+                <gml:name>Tampere Härmälä</gml:name>
+                <gml:pos>61.46561 23.74678 </gml:pos>
+            </gml:Point>
+	    </gml:pointMember>
+              <gml:pointMember>
+              <gml:Point gml:id="point-101150" srsName="http://www.opengis.net/def/crs/EPSG/0/4258" srsDimension="2">
+                <gml:name>Hämeenlinna Katinen</gml:name>
+                <gml:pos>60.99920 24.49163 </gml:pos>
+            </gml:Point>
+	    </gml:pointMember>
+              <gml:pointMember>
+              <gml:Point gml:id="point-101151" srsName="http://www.opengis.net/def/crs/EPSG/0/4258" srsDimension="2">
+                <gml:name>Hattula Lepaa</gml:name>
+                <gml:pos>61.11454 24.32449 </gml:pos>
+            </gml:Point>
+	    </gml:pointMember>
+              <gml:pointMember>
+              <gml:Point gml:id="point-101311" srsName="http://www.opengis.net/def/crs/EPSG/0/4258" srsDimension="2">
+                <gml:name>Tampere Siilinkari</gml:name>
+                <gml:pos>61.51757 23.75388 </gml:pos>
+            </gml:Point>
+	    </gml:pointMember>
+              <gml:pointMember>
+              <gml:Point gml:id="point-101317" srsName="http://www.opengis.net/def/crs/EPSG/0/4258" srsDimension="2">
+                <gml:name>Juupajoki Hyytiälä</gml:name>
+                <gml:pos>61.84591 24.28696 </gml:pos>
+            </gml:Point>
+	    </gml:pointMember>
+	    </gml:MultiPoint>
+          </sams:shape>
+        </sams:SF_SpatialSamplingFeature>
+      </om:featureOfInterest>
+
+           <om:result>
+        <gmlcov:MultiPointCoverage gml:id="mpcv1-1-1">
+          <gml:domainSet>
+            <gmlcov:SimpleMultiPoint gml:id="mp1-1-1" srsName="http://xml.fmi.fi/gml/crs/compoundCRS.php?crs=4258&amp;time=unixtime" srsDimension="3">
+              <gmlcov:positions>
+                61.41940 23.62256  1792794000
+                61.41940 23.62256  1792794600
+                61.41940 23.62256  1792795200
+                61.41940 23.62256  1792795800
+                61.41940 23.62256  1792796400
+                61.41940 23.62256  1792797000
+                61.46561 23.74678  1792794000
+                61.46561 23.74678  1792794600
+                61.46561 23.74678  1792795200
+                61.46561 23.74678  1792795800
+                61.46561 23.74678  1792796400
+                61.46561 23.74678  1792797000
+                60.99920 24.49163  1792794000
+                60.99920 24.49163  1792794600
+                60.99920 24.49163  1792795200
+                60.99920 24.49163  1792795800
+                60.99920 24.49163  1792796400
+                60.99920 24.49163  1792797000
+                61.11454 24.32449  1792794000
+                61.11454 24.32449  1792794600
+                61.11454 24.32449  1792795200
+                61.11454 24.32449  1792795800
+                61.11454 24.32449  1792796400
+                61.11454 24.32449  1792797000
+                61.51757 23.75388  1792794000
+                61.51757 23.75388  1792794600
+                61.51757 23.75388  1792795200
+                61.51757 23.75388  1792795800
+                61.51757 23.75388  1792796400
+                61.51757 23.75388  1792797000
+                61.84591 24.28696  1792794000
+                61.84591 24.28696  1792794600
+                61.84591 24.28696  1792795200
+                61.84591 24.28696  1792795800
+                61.84591 24.28696  1792796400
+                61.84591 24.28696  1792797000
+                </gmlcov:positions>
+            </gmlcov:SimpleMultiPoint>
+          </gml:domainSet>
+          <gml:rangeSet>
+            <gml:DataBlock>
+              <gml:rangeParameters/>
+              <gml:doubleOrNilReasonTupleList>
+                9.4 3.2 4.7 127.0 97.0 8.9 NaN 1014.3 8.0 12565.0 61.0 
+                9.4 3.0 5.1 130.0 96.0 8.9 NaN 1014.2 8.0 11216.0 61.0 
+                9.4 3.0 5.1 132.0 97.0 8.9 NaN 1014.1 8.0 9975.0 61.0 
+                9.5 3.8 5.6 135.0 97.0 9.0 NaN 1014.0 8.0 15312.0 61.0 
+                9.5 3.5 5.0 129.0 96.0 9.0 NaN 1014.0 8.0 19083.0 61.0 
+                9.5 3.7 5.3 130.0 97.0 9.0 NaN 1013.9 8.0 19497.0 61.0 
+                9.5 NaN NaN NaN 98.0 9.1 NaN 1014.2 8.0 7260.0 61.0 
+                9.5 NaN NaN NaN 98.0 9.2 NaN 1014.1 8.0 11013.0 61.0 
+                9.6 NaN NaN NaN 98.0 9.2 NaN 1014.0 8.0 12452.0 52.0 
+                9.5 NaN NaN NaN 98.0 9.2 NaN 1014.0 8.0 11240.0 61.0 
+                9.6 NaN NaN NaN 98.0 9.3 0.5 1013.9 8.0 13011.0 61.0 
+                9.6 NaN NaN NaN 98.0 9.3 NaN 1013.8 8.0 16464.0 61.0 
+                9.9 3.3 5.5 132.0 100.0 9.9 NaN 1014.2 8.0 13772.0 61.0 
+                9.9 3.6 6.6 134.0 100.0 9.9 NaN 1014.2 8.0 14945.0 61.0 
+                9.9 3.2 5.2 133.0 100.0 9.9 NaN 1014.1 8.0 16604.0 61.0 
+                10.0 3.3 5.2 136.0 100.0 10.0 NaN 1014.1 8.0 14155.0 52.0 
+                10.0 3.7 5.8 137.0 100.0 10.0 0.5 1014.0 8.0 16337.0 52.0 
+                10.0 3.3 5.4 139.0 100.0 10.0 NaN 1014.0 8.0 14061.0 61.0 
+                9.9 NaN NaN NaN 96.0 9.3 NaN NaN NaN NaN NaN 
+                9.9 NaN NaN NaN 96.0 9.3 NaN NaN NaN NaN NaN 
+                9.9 NaN NaN NaN 96.0 9.3 NaN NaN NaN NaN NaN 
+                10.0 NaN NaN NaN 96.0 9.3 NaN NaN NaN NaN NaN 
+                9.9 NaN NaN NaN 97.0 9.5 0.3 NaN NaN NaN NaN 
+                10.0 NaN NaN NaN 96.0 9.4 NaN NaN NaN NaN NaN 
+                9.6 4.2 6.6 111.0 96.0 9.0 NaN 1014.2 NaN NaN NaN 
+                9.6 4.4 5.6 111.0 95.0 8.9 NaN 1014.1 NaN NaN NaN 
+                9.6 4.0 5.3 112.0 95.0 8.9 NaN 1014.0 NaN NaN NaN 
+                9.7 4.0 5.5 119.0 95.0 8.9 NaN 1013.9 NaN NaN NaN 
+                9.7 4.1 6.5 123.0 96.0 9.1 NaN 1013.9 NaN NaN NaN 
+                9.7 3.8 5.3 121.0 96.0 9.1 NaN 1013.8 NaN NaN NaN 
+                8.4 NaN NaN NaN 95.0 7.7 NaN 1015.0 8.0 3434.0 62.0 
+                8.5 NaN NaN NaN 94.0 7.6 NaN 1014.9 8.0 4214.0 62.0 
+                8.5 NaN NaN NaN 95.0 7.8 NaN 1014.8 8.0 3851.0 62.0 
+                8.6 NaN NaN NaN 95.0 7.7 NaN 1014.7 8.0 4249.0 62.0 
+                8.6 NaN NaN NaN 95.0 7.8 1.4 1014.6 8.0 2612.0 62.0 
+                8.6 NaN NaN NaN 95.0 7.8 NaN 1014.5 8.0 2517.0 62.0 
+                </gml:doubleOrNilReasonTupleList>
+            </gml:DataBlock>
+          </gml:rangeSet>
+          <gml:coverageFunction>
+            <gml:CoverageMappingRule>
+              <gml:ruleDefinition>Linear</gml:ruleDefinition>
+            </gml:CoverageMappingRule>
+          </gml:coverageFunction>
+          <gmlcov:rangeType>
+            <swe:DataRecord>
+              <swe:field name="t2m"  xlink:href="https://opendata.fmi.fi/meta?observableProperty=observation&amp;param=t2m&amp;language=eng"/>
+              <swe:field name="ws_10min"  xlink:href="https://opendata.fmi.fi/meta?observableProperty=observation&amp;param=ws_10min&amp;language=eng"/>
+              <swe:field name="wg_10min"  xlink:href="https://opendata.fmi.fi/meta?observableProperty=observation&amp;param=wg_10min&amp;language=eng"/>
+              <swe:field name="wd_10min"  xlink:href="https://opendata.fmi.fi/meta?observableProperty=observation&amp;param=wd_10min&amp;language=eng"/>
+              <swe:field name="rh"  xlink:href="https://opendata.fmi.fi/meta?observableProperty=observation&amp;param=rh&amp;language=eng"/>
+              <swe:field name="td"  xlink:href="https://opendata.fmi.fi/meta?observableProperty=observation&amp;param=td&amp;language=eng"/>
+              <swe:field name="r_1h"  xlink:href="https://opendata.fmi.fi/meta?observableProperty=observation&amp;param=r_1h&amp;language=eng"/>
+              <swe:field name="p_sea"  xlink:href="https://opendata.fmi.fi/meta?observableProperty=observation&amp;param=p_sea&amp;language=eng"/>
+              <swe:field name="n_man"  xlink:href="https://opendata.fmi.fi/meta?observableProperty=observation&amp;param=n_man&amp;language=eng"/>
+              <swe:field name="vis"  xlink:href="https://opendata.fmi.fi/meta?observableProperty=observation&amp;param=vis&amp;language=eng"/>
+              <swe:field name="wawa"  xlink:href="https://opendata.fmi.fi/meta?observableProperty=observation&amp;param=wawa&amp;language=eng"/>
+              </swe:DataRecord>
+          </gmlcov:rangeType>
+        </gmlcov:MultiPointCoverage>
+      </om:result>
+
+    </omso:GridSeriesObservation>
+  </wfs:member>
+</wfs:FeatureCollection>

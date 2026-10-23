@@ -1,8 +1,8 @@
 {
-  "name": "gladys-integration-template-js",
+  "name": "gladys-fmi",
   "version": "1.0.0",
   "private": true,
-  "description": "Official starter template to build an external integration for Gladys Assistant with the JavaScript SDK.",
+  "description": "FMI weather provider for Gladys Assistant: official observations, forecasts and warnings for Finland, no API key.",
   "type": "module",
   "main": "index.js",
   "scripts": {
