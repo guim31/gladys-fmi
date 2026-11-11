@@ -66,7 +66,7 @@ C'est tout : le widget météo de votre tableau de bord affiche maintenant le
 FMI. Si une autre intégration météo est installée, choisissez le fournisseur
 dans les réglages du widget météo.
 
-Gladys 5.2 ou plus récent est nécessaire.
+Gladys 5.3 ou plus récent est nécessaire.
 
 ## Configuration
 
@@ -227,7 +227,7 @@ disponibles** vaut non.
 - **Aujourd'hui** ne contient que les heures encore à venir.
 - **Les jours** sont découpés dans le fuseau horaire de Gladys, pour toutes
   les maisons.
-- L'intégration nécessite Gladys 5.2 ou plus récent.
+- L'intégration nécessite Gladys 5.3 ou plus récent.
 
 ## Dépannage
 
