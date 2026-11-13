@@ -61,7 +61,7 @@ That's it: the weather widget of your dashboard now shows FMI. If another
 weather integration is installed, pick the provider in the settings of the
 weather widget.
 
-Gladys 5.2 or later is required.
+Gladys 5.3 or later is required.
 
 ## Configuration
 
@@ -217,7 +217,7 @@ Sun 25 Oct, 08:00 to Mon 26 Oct, 14:00." If FMI cannot be reached,
 - **The hour is the finest step**, for about 9 days.
 - **Today** only holds the hours still to come.
 - **The days** are cut in the time zone of Gladys, for every house.
-- The integration needs Gladys 5.2 or later.
+- The integration needs Gladys 5.3 or later.
 
 ## Troubleshooting
 

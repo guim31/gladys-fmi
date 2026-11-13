@@ -65,7 +65,7 @@ Das war's: Das Wetter-Widget deines Dashboards zeigt jetzt das FMI. Wenn eine
 andere Wetter-Integration installiert ist, wähle den Anbieter in den
 Einstellungen des Wetter-Widgets.
 
-Gladys 5.2 oder neuer ist erforderlich.
+Gladys 5.3 oder neuer ist erforderlich.
 
 ## Konfiguration
 
@@ -227,7 +227,7 @@ FMI nicht erreichbar ist, ist **Warnungen verfügbar** nein.
 - **Heute** enthält nur die noch kommenden Stunden.
 - **Die Tage** werden in der Zeitzone von Gladys geschnitten, für alle
   Zuhause.
-- Die Integration benötigt Gladys 5.2 oder neuer.
+- Die Integration benötigt Gladys 5.3 oder neuer.
 
 ## Fehlerbehebung
 
