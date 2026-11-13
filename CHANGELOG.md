@@ -10,6 +10,8 @@ the notes of the version's GitHub Release.
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-11-13
+
 ### Changed
 
 - Declared for Finland only (`countries: ["FI"]`): the Gladys catalog of an
@@ -41,5 +43,6 @@ the notes of the version's GitHub Release.
 - Settings: units and language of the scene texts. A "Test FMI" button that
   names the station used.
 
-[Unreleased]: https://github.com/guim31/gladys-fmi/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/guim31/gladys-fmi/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/guim31/gladys-fmi/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/guim31/gladys-fmi/releases/tag/v1.0.0

@@ -1,6 +1,6 @@
 {
   "name": "gladys-fmi",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "FMI weather provider for Gladys Assistant: official observations, forecasts and warnings for Finland, no API key.",
   "type": "module",
